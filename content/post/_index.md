@@ -1,5 +1,5 @@
 ---
-title: Posts
+title: EfficieNN - blog posts
 
 # View.
 #   1 = List

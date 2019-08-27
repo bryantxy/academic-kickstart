@@ -5,11 +5,11 @@ name = "myfonts"
 google_fonts = "Montserrat|Roboto+Mono|Open+Sans"
 
 # Font families
-heading_font = "Montserrat"
+heading_font = "Open Sans"
 body_font = "Open Sans"
 nav_font = "Open Sans"
 mono_font = "Roboto Mono"
 
 # Font size
-font_size = "20"
-font_size_small = "18"
+font_size = "16"
+font_size_small = "14"

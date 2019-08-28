@@ -17,7 +17,7 @@ draft: false
 # Focal points: Smart, Center, TopLeft, Top, TopRight, Left, Right, BottomLeft, Bottom, BottomRight.
 image:
   caption: ""
-  focal_point: ""
+  focal_point: "Center"
   preview_only: false
 
 # Projects (optional).
@@ -28,11 +28,11 @@ image:
 projects: []
 ---
 
-On my not-too-shabby laptop, I can run most common CNN models in (at most) a 10-100 milliseconds, with libraries like TensorFlow. In 2019, even a smartphone can run "heavy" CNN models (like ResNet) in less than half a second. So imagine my surprise when I timed my own simple implementation of a convolution layer and found that it took over *2 seconds* for a single layer!
+On my not-too-shabby laptop CPU, I can run most common CNN models in (at most) 10-100 milliseconds, with libraries like TensorFlow. In 2019, even a smartphone can run "heavy" CNN models (like ResNet) in less than half a second. So imagine my surprise when I timed my own simple implementation of a convolution layer and found that it took over *2 seconds* for a single layer!
 
 It's no surprise that modern deep-learning libraries have production-level, highly-optimized implementations of most operations. But just what is the black magic that these libraries use that we mere mortals don't? How are they able to improve performance by 100x? What exactly does one do to "optimize" or accelerate neural networks operations? These are questions I often asked (and get asked) when talking about high-performance/efficient DNNs.
 
-In this post, I'll attempt to walk you through how a layer like convolution is implemented in DNN libraries. Not only is it one of the most common and heaviest operations in many DNN models, I also find the case of convolution to be particularly representative of the kind of tricks that go into these high-performance implementations -- a little of bit of algorithmic cleverness and a lot of tuning and careful exploitation of low-level architecture.
+In this post, I'll attempt to walk you through how a layer like convolution is implemented in DNN libraries. Not only is it one of the most common and heaviest operations in many DNN models, I also find the case of convolution to be particularly representative of the kind of tricks that go into these high-performance implementations -- a little of bit of algorithmic cleverness and a lot of careful tuning and exploitation of low-level architecture.
 
 A lot of what I cover here is from the seminal paper [*"Anatomy of a high-performance matrix multiplication"*](https://www.cs.utexas.edu/~flame/pubs/GotoTOMS_revision.pdf) by Goto et al. which formed the basis for the algorithms used in linear algebra libraries like OpenBLAS; and these helpful tutorial from [Dr. Stefan Hadjis](https://cs.stanford.edu/people/shadjis/blas.html) and [Chris Rose](https://www.whatsacreel.net).
 
@@ -81,7 +81,7 @@ We can also use this to get an idea of how close we are to the peak performance 
 * each core has a frequency of 2.5 GHz, or $2.5\times10^9$ CPU cycles per second
 * in each cycle, it can process 32 FLOPs (using AVX & FMA, more on this in a bit)
   
-This gives a peak performance of $2\times2.5\times10^9\frac{cycles}{second}\times32 \frac{FLOPs}{cycle}=160$ GFLOP/s. This is the theoretical peak of my CPU. For a single core, this number is 80 GFLOP/s.
+This gives a peak performance of $2\times2.5\times10^9\frac{cycles}{second}\times32\frac{FLOPs}{cycle}=160$ GFLOP/s. This is the theoretical peak of my CPU. Similarly for a single core, this number is 80 GFLOP/s.
 
 ## Storage orders and Row Major
 While we logically view matrices/images/tensors as multi-dimensional, they're physically stored in a linear, one-dimensional computer memory. We have to define a convention which dictates how to unwrap these multiple dimensions to a linear storage, and vice versa.
@@ -100,8 +100,7 @@ The various levels of cache (L1, L2, L3) represent increasingly faster but small
 While this is a vast subject, what's important to know for this discussion is that our naive implementation suffers majorly from poor data caching. Our goal will be to exploit the cache as much as possible -- but  -->
 
 ## Halide
-Many of the optimizations discussed here require meddling at the lower-level with cryptic C syntax or even
-assembly. Not only does this make code difficult to read, it also makes trying out different optimizations difficult as we have to re-write our entire code . [Halide](https://halide-lang.org) is an embededd language in C++ that helps abstract these concepts, designed to help write fast image-processing code. It makes it easier to experiment with different optimizations by disentangling the algorithm (*what* to compute) and the schedule (*how/when* to compute it). We can keep the algorithm fixed, and play around with different schedules.
+Many of the optimizations discussed here require meddling at the lower-level with cryptic C syntax or even assembly. Not only does this make code difficult to read, it also makes trying out different optimizations difficult as we have to re-write our entire code . [Halide](https://halide-lang.org) is an embededd language in C++ that helps abstract these concepts, designed to help write fast image-processing code. It makes it easier to experiment with different optimizations by disentangling the algorithm (*what* to compute) and the schedule (*how/when* to compute it). We can keep the algorithm fixed, and play around with different schedules.
 
 I'll use Halide to represent these lower-level concepts, but you should be able to understand the intuitive function names enough to follow along.
 

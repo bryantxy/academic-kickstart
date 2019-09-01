@@ -33,8 +33,6 @@ header:
 <span style="color:#5f6a6a">_This post was featured on [Heartbeat by Fritz][heartbeat] and [DL Weekly][dlweekly]_</span>
 <br/>
 <br/>
-<div style="text-align: justify">
-
 
 Francois Chollet puts it concisely:
 <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">- make it possible<br>- make it work<br>- make it efficient<br>- make it dependable and invisible<br>- move on to the next layer and never think about it again</p>&mdash; François Chollet (@fchollet) <a href="https://twitter.com/fchollet/status/985607164461907968?ref_src=twsrc%5Etfw">April 15, 2018</a></blockquote>
@@ -202,7 +200,6 @@ Most of the processes described here are specific to how quantization is done in
 
 **Further Reading**
 -------------------
-<div style="text-align: left">
 #### Quantization in TF-Lite
 <a name="warden"></a>
 

@@ -1,7 +1,7 @@
 ---
 # Documentation: https://sourcethemes.com/academic/docs/managing-content/
 
-title: "Anatomy of a High-Performance Convolution"
+title: "Anatomy of a High-Speed Convolution"
 subtitle: ""
 summary: "It's no surprise that modern deep-learning libraries have production-level, highly-optimized implementations of most operations. But just what is the black magic that these libraries use that we mere mortals don't? What exactly does one do to \"optimize\" or accelerate neural networks operations? "
 authors: [""]

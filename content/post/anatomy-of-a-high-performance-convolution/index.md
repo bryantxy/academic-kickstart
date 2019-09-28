@@ -165,7 +165,7 @@ The RAM is a large but slow storage. CPU caches are orders of magnitude faster, 
 
 Every time we fetch data from the main memory, the CPU automatically loads it and its neighboring memory into the cache, hoping to utilize locality of reference.
 
-{{<figure src="img/cache-line.svg" width="70%">}}
+{{<figure src="img/cache-line.png" width="70%">}}
 
 The first thing that you should then notice is the pattern in which we're accessing our data. We're traversing row-wise on $A$ and column-wise on $B$. 
 {{<figure src="img/naive-traversal.svg" width="80%">}}

@@ -1,5 +1,5 @@
 ---
-title: EfficieNN - blog posts
+title: EfficieNN
 
 # View.
 #   1 = List
@@ -12,3 +12,5 @@ header:
   caption: ""
   image: ""
 ---
+
+Blog posts on technologies to make deep learning efficient, accessible, and user-friendly.

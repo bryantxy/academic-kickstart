@@ -8,7 +8,7 @@ authors: [""]
 tags: []
 categories: []
 date: 2019-08-26T21:57:19+05:30
-lastmod: 2019-08-26T21:57:19+05:30
+lastmod: 2020-01-18T15:50:00-05:00
 featured: false
 draft: false
 
@@ -53,7 +53,7 @@ for filter in 0..num_filters
             for out_w in 0..output_width
                 for k_h in 0..kernel_height
                     for k_w in 0..kernel_width
-                        output[filter, channel, out_h, out_h] += 
+                        output[filter, out_h, out_w] += 
                             kernel[filter, channel, k_h, k_w] * 
                             input[channel, out_h + k_h, out_w + k_w]
 ```

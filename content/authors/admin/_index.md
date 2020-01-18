@@ -71,6 +71,6 @@ email: ""
 
 I'm a CS Masters student at Georgia Tech, and a Mathematics & Computing graduate from Delhi College of Engineering.
 
-From 2017-2019, I was a Sotfware Engineer at Samsung Research - Bangalore, where I worked on the intersection of machine learning & systems, to make heavy neural networks run efficiently on low-power devices.
+From 2017-2019, I was a Software Engineer at Samsung Research - Bangalore, where I worked on the intersection of machine learning & systems, to make heavy neural networks run efficiently on low-power devices.
 
 I like to learn new things & explain them, and talk people’s ears off about work I find interesting.

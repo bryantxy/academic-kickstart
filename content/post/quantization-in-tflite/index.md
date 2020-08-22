@@ -5,7 +5,6 @@ title: Making Neural Nets Work With Low Precision
 subtitle: "8-bit quantization in TensorFlow-Lite"
 summary: "Deploying efficient neural nets on mobiles is becoming increasingly important. This post explores the concept of quantized inference, and how it works in TensorFlow Lite."
 tags: ["quantization", "tf-lite", "inference", "performance"]
-authors: [""]
 date: 2018-06-24
 lastmod: 2018-12-07
 featured: false
@@ -30,7 +29,7 @@ projects: []
 header:
   image: "quantization-in-tflite.png"
 ---
-<span style="color:#5f6a6a">_This post was featured on [Heartbeat by Fritz][heartbeat] and [DL Weekly][dlweekly]_</span>
+<span style="color:#5f6a6a"><i>This post was featured on [Heartbeat by Fritz][heartbeat] and [DL Weekly][dlweekly]</i></span>
 <br/>
 <br/>
 
@@ -40,23 +39,7 @@ Francois Chollet puts it concisely:
 
 For many deep learning problems, we're finally starting with the “make it efficient” stage. We had been stuck at the first two stages for many decades where speed and efficiency weren't nearly as important as getting things to work in the first place. So, the question of how precise our calculations need to be – and whether we can manage with lower precision – wasn't often asked. However, now that neural networks are good enough at many problems to be of production-grade or better, this question has risen again. And the answers suggest we could do with low(er) precision, causing what may soon be a paradigm shift in mobile-optimized AI. This post talks about the concept of quantized inference, and how it works in [TensorFlow-Lite][tf-lite].
 
-<sub>_**TL;DR just tell me how to quantize my model**_: Here's a [tutorial][tf_tutorial] from TensorFlow with code</sub>
-
-<details>
- <summary> <big> Table of Contents (click to expand) </big> </summary>
-{{% toc %}}
-<!-- 
-> [What is low-precision?](#what-is-low-precision) <br/>
-> [Why do we care?](#why-do-we-care) <br/>
-> [Why does it work?](#why-does-it-work) <br/>
-> [**Quantization in TF-Lite**](#quantization-in-tf-lite) <br/>
-> -- [Floating point vs Fixed-point](#floating-point-vs-fixed-point) <br/>
-> -- [Quantization scheme](#quantization-scheme) <br/>
-> -- [A typical quantized layer](#a-typical-quantized-layer) <br/>
-> -- ["Fake" Quantization](#%22fake%22-quantization) <br/>
-> -- [What's next](#whats-next) <br/>
-> [Further Reading](#further-reading) <br/> -->
-</details>
+<sub>**TL;DR just tell me how to quantize my model**: Here's a [tutorial][tf_tutorial] from TensorFlow with code</sub>
 
 What is low-precision?
 -----------------------
@@ -74,15 +57,12 @@ Supporting inference with quantized types in any ML framework like Caffe, Tensor
  * In moving from 32-bits to 8-bits, we get (almost) 4x reduction in memory straightaway. Lighter deployment models mean they hog lesser storage space, are easier to share over smaller bandwidths, easier to update, etc.
  * Lower bit-widths also mean that we can squeeze more data in the same caches/registers. This means we can reduce how often we access things from RAM, which is usually consumes a lot of time and power.
  * Floating point arithmetic is [hard][fp_hard_rant] – which is why it may not always be supported on microcontrollers on some ultra low-power embedded devices, such as drones, watches, or IoT devices. Integer support, on the other hand, is readily available.  
-
-
+\
+\
 You can see why all of this sounds like great news for someone interested in deep learning applications on mobiles or embedded devices. Deep learning researchers are now finding ways to train models that work better with quantization, ML library developers are building extensive framework support for quantized inference, and tech giants are throwing their weight behind [dedicated hardware for AI][ai_chip_general] with emphasis on quantization support ([Google][google_tpu], [Huawei][kirin970], [Microsoft][ms_chip], [Facebook][fb_chip], [Apple][iphone_neural_engine]… ). Even without such dedicated hardware, DSP chips on modern smartphone chipsets have instruction sets well-suited for this kind of integer computation.
-\
-\
-\
-Why does it work?
----------------------
+
 ***
+## Why does it work?
 There has been an increasing amount of work in quantizing neural networks, and they broadly point to two reasons. First, DNNs are known to be quite robust to noise and other small perturbations once trained. This means even if we subtly round-off numbers, we can still expect a reasonably accurate answer. Moreover, the weights and activations by a particular layer often tend to lie in a small range, which can be estimated beforehand. This means we don't need the ability to store 10<sup>6</sup> and 10<sup>-6</sup> in the same data type - allowing us to concentrate our precicious fewer bits within a smaller range, say -3 to +3. As you may imagine, it'll be crucial to accurately know this smaller range - a recurring theme you'll see below. 
 
 So, if done right, quantization only causes a small loss of precision which usually doesn't change the output significantly. Finally, small losses in accuracy can be recovered by retraining our models to adjust to quantization.
@@ -144,7 +124,7 @@ Here,
 From this point, we'll assume quantized variables to be represented as `uint8`, except where mentioned. Alternatively, we could also use int8, which would just shift the zero-point, $z$.
 
 The set of numbers being quantized with the same parameters are values we expect to lie in the same range, such as weights of a given layer or activation outputs at a given node. We'll see later how to find the actual ranges for various quantities in TensorFlow's *fake quantization* nodes. First, let's see just put this together to see how these quantized layers fit in a network.
-<br/>
+***
 A typical quantized layer
 -----------------------------
 Let's look at the components of a conventional layer implemented in floating-point:
@@ -165,7 +145,7 @@ The below figure puts it all together.
 ![layer]
 
 We can even get a bit clever with the re-quantization in (3). TF-Lite uses gemmlowp for matrix multiplication, which stores results of `uint8` matrix products in `int32`. Then, we can add the biases quantized in higher precision as `int32` itself. Finally, in going from 32-bit to 8-bit, (4) would expect the range of this layer's output. Instead, we can specify the quantization range expected after the next activation layer, such as ReLU. This will implicitly compute activations and also help us use the full quantization range in this layer.  
-<br/> 
+***
 "Fake" Quantization
 ----------------------
 Now that we have everything in place to work with quantized variables, what's left is preparing & converting a 

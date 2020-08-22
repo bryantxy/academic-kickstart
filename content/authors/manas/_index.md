@@ -4,13 +4,13 @@ title: Manas Sahni
 
 # Username (this should match the folder name)
 authors:
-- admin
+- manas
 
 # Is this the primary user of the site?
 superuser: true
 
 # Role/position
-role: MS student
+role: MS CS student
 
 # Organizations/Affiliations
 organizations:
@@ -18,7 +18,7 @@ organizations:
   url: ""
 
 # Short bio (displayed in user profile at end of posts)
-bio: My research interests include distributed robotics, mobile computing and programmable matter.
+bio: 
 
 interests:
 - Systems for Deep Learning
@@ -53,7 +53,6 @@ social:
   icon_pack: fab
   link: https://github.com/sahnimanas
 # Link to a PDF of your resume/CV from the About widget.
-
 # To enable, copy your resume/CV to `static/files/cv.pdf` and uncomment the lines below.  
 - icon: cv
   icon_pack: ai
@@ -69,8 +68,10 @@ email: ""
 # - Visitors
 ---
 
-I'm a CS Masters student at Georgia Tech, and a Mathematics & Computing graduate from Delhi College of Engineering.
+I'm a 2nd year MS CS student at Georgia Tech. I'm advised by [Prof. Alexey Tumanov](https://www.cc.gatech.edu/~atumanov/) in the Systems for Artificial Intelligence Lab (SAIL), working on democratizing machine learning through better frameworks, tools, and algorithms.
 
-From 2017-2019, I was a Software Engineer at Samsung Research - Bangalore, where I worked on the intersection of machine learning & systems, to make heavy neural networks run efficiently on low-power devices.
+In Summer 2020, I interned at [Nvidia with the TensorRT team](https://developer.nvidia.com/tensorrt), optimizing systems for deep-learning inference on GPUs.
+
+Prior to starting at Georgia Tech, I was an ML Software Engineer at Samsung R&D, India helping enable flagship vision applications through the [Samsung Neural SDK](https://developer.samsung.com/neural/overview.html) and completed my Bachelor's degree in Mathematics & Computing at Delhi Technological University.
 
 I like to learn new things & explain them, and talk people’s ears off about work I find interesting.

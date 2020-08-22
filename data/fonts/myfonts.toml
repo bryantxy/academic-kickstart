@@ -2,7 +2,7 @@
 name = "myfonts"
 
 # Optional Google font URL
-google_fonts = "Montserrat|Roboto+Mono|Open+Sans"
+google_fonts = "Open+Sans|Roboto+Mono"
 
 # Font families
 heading_font = "Open Sans"

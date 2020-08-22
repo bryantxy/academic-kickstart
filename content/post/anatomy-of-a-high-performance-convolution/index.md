@@ -4,7 +4,6 @@
 title: "Anatomy of a High-Speed Convolution"
 subtitle: ""
 summary: "It's no surprise that modern deep-learning libraries have production-level, highly-optimized implementations of most operations. But just what is the black magic that these libraries use that we mere mortals don't? What exactly does one do to \"optimize\" or accelerate neural networks operations? "
-authors: [""]
 tags: []
 categories: []
 date: 2019-08-26T21:57:19+05:30
@@ -90,7 +89,7 @@ Most modern DL libraries use a *row-major* storage order. This means that consec
 
 What about the ordering of the dimensions themselves? Usually for 4-dimensional tensors like in CNNs, you'll hear of storage orders like NCHW, NHWC, etc. I'll assume NCHW throughout this post -- if I have N blocks of C channels of HxW images, then all images with the same N are contigous; within that block all pixels of the same channel C are contigous, and so on.
 
-{{<figure src="img/storage-order.png">}}
+{{<figure src="./img/storage-order.png">}}
 
 <!-- ## Memory hierarchy
 
@@ -116,10 +115,10 @@ Conv is, after all, a dot-product of the filter with input patches. If we lay ou
 The above laying out of the image patches into a matrix is called _**im2col**_, for image to column. We rearrange the image into columns of a matrix, so that each column corresponds to one patch where the conv filter is applied. 
 
 Consider this normal, direct 3x3 convolution:
-{{<figure src="img/direct-conv-im2col.png">}}
+{{<figure src="./img/direct-conv-im2col.png">}}
 
 Below is the same operation implemented as a matrix multiplication. The right matrix is the result of im2col -- it has to be constructed by copying pixels from the original image. The left matrix has the conv weights, which are already stored this way in memory.
-{{<figure src="img/matrix-im2col.png">}}
+{{<figure src="./img/matrix-im2col.png">}}
 
 Note that the matrix product gives us the conv output directly -- there is no need for an extra "conversion" to the original form.
 
@@ -156,7 +155,7 @@ C(x,y) += A(k, x) *= B(y, k);  // loop bounds, dims, etc. are taken care of auto
 The inner most line does 2 floating point ops (multiply & add) and is performed $M*N*K$ times, so the number of FLOPs for this GEMM is $2MNK$.
 
 Let's measure its performance for various matrix sizes:
-{{<figure src="img/plot-naive.png">}}
+{{<figure src="./img/plot-naive.png">}}
 
 We barely reach 10% of peak performance! While we'll look into ways to make the computation faster, a recurring theme will be that it's not enough to just *compute* the data fast if we can't *get* the data fast. As memory becomes a bigger and bigger issue for larger matrices, the performance continues to gradually dip. The sharp drop you see towards the end? That represents the point when the matrices become too big to fit in the cache and the throughput suddenly drops -- you can see the system choking.
 
@@ -165,17 +164,17 @@ The RAM is a large but slow storage. CPU caches are orders of magnitude faster, 
 
 Every time we fetch data from the main memory, the CPU automatically loads it and its neighboring memory into the cache, hoping to utilize locality of reference.
 
-{{<figure src="img/cache-line.png" width="70%">}}
+{{<figure src="./img/cache-line.png" width="70%">}}
 
 The first thing that you should then notice is the pattern in which we're accessing our data. We're traversing row-wise on $A$ and column-wise on $B$. 
-{{<figure src="img/naive-traversal.svg" width="80%">}}
+{{<figure src="./img/naive-traversal.svg" width="80%">}}
 
 Their storage is also row-major, so once we find `A[i, k]`, the next element in the row, `A[i, k+1]` is already cached. Cool. But see what happens for $B$ :
 
  - the next element of the column isn't present in the cache -- we get a cache miss and the CPU stalls while the data is fetched
  - once fetched, the cache also gets filled with other elements in the same row of $B$. We won't actually use them, so they'll be evicted soon. A few iterations later when they're actually needed, we'll be working to fetch them again. We're **polluting** the cache with values we don't need.
 
-{{<figure src="img/cache-pollution.png" width="50%">}}
+{{<figure src="./img/cache-pollution.png" width="50%">}}
 
 We need to rework our loops to exploit this caching ability instead. If data is being read, we might as well make use of it. This brings us to the first change we'll make: **loop reordering**.
 
@@ -187,11 +186,11 @@ for i in 0..M:
 ```
 Our answer is still correct because the order of multiplications/additions doesn't matter. The traversal order will now look like this
 
-{{<figure src="img/reordered.svg" width="80%">}}
+{{<figure src="./img/reordered.svg" width="80%">}}
 
 This simple change of just reordering the loops gives a considerable speedup:
 
-{{<figure src="img/plot-reorder.png">}}
+{{<figure src="./img/plot-reorder.png">}}
 
 ## Tiling
 To further improve upon reordering, there's one more caching issue we need to consider.
@@ -222,7 +221,7 @@ We've broken the x,y dimensions into an outer `xo,yo` and inner `xi,yi`. We'll s
 ## Vectorization & FMA
 
 Most modern CPUs support **SIMD**, or **S**ingle **I**nstruction **M**ultiple **D**ata. As the name suggests, SIMD can be used to do the same operation/instruction (like add, multiply, etc.) on multiple values simultaneously, in the same CPU cycle. If we can run SIMD instructions on say 4 data points at a time, that's a 4x speedup straightaway. 
-{{<figure src="img/simd.png" width="75%">}}
+{{<figure src="./img/simd.png" width="75%">}}
 
 So when we calculated the peak speed of the processor, we _sort of_ cheated and were instead referring to this vectorized performance. This is of great use for data like vectors, where we have to apply the same instruction to every vector element. But we still have to design our kernel to exploit this properly.
 
@@ -246,7 +245,7 @@ for xo in 0..N/16:
                     C(...) = ...
 */
 ```
-{{<figure src="img/plot-vector.png">}}
+{{<figure src="./img/plot-vector.png">}}
 
 ## Threading
 Up until now we've only been using one CPU core. We have multiple cores available, and each core can physically execute multiple instructions at the same time. A program can divide itself into multiple threads, and each thread can run on a separate core.
@@ -270,7 +269,7 @@ for xo in 0..N/16 in steps of 16:
 ```
 You might notice that the performance actually drops for very small sizes, because with small workloads, the threads spend less time working and more time synchronizing with each other. There are a lot of other such issues with respect to threading that could warrant another deep dive on its own.
 
-{{<figure src="img/plot-parallel.png">}}
+{{<figure src="./img/plot-parallel.png">}}
 
 ## Unrolling
 Loops let us avoid the pain of writing the same line over and over again, while introducing a little extra work like checking for loop termination, updating the loop counters, pointer arithmetic, etc. If instead we manually write out the repeated loop statements and *unroll* the loop, we can reduce this overhead. For instance, instead of 8 iterations of 1 statement, we could run 2 iterations of 4 statements.
@@ -304,7 +303,7 @@ for xo in 0..N/16:
 ```
 
 We're now able to touch speeds up to 60 GFLOP/s.
-{{<figure src="img/plot-unroll.png">}}
+{{<figure src="./img/plot-unroll.png">}}
 
 # Putting It together
 The above steps cover some of the most commonly-used transformations to speed up performance. They're usually combined in different ways to come up with more and more complex schedules to compute the same task.
@@ -341,7 +340,7 @@ In summary, it does this:
 - Copy the temporary `matrix_mul` back to `out` with vectorization, unrolling, etc.
 - Parallelize this process over all 32x24 tiles
 
-{{<figure src="img/plot-halide.png">}}
+{{<figure src="./img/plot-halide.png">}}
 
 Finally, we're able to touch speeds of over 120 GFLOPs -- respectably close to the peak performance of 160 GFLOPs, and matching production-level libraries like OpenBLAS. With similar fine-tuned code for im2col, followed by gemm, the same convolution now runs in ~20ms.  If you're interested in going deeper into this, try experimenting with different schedules of your own -- while as an engineer I had always heard statements about caching, performance, etc., seeing their true effect can be rewarding and fun.
 

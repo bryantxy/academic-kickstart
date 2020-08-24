@@ -30,7 +30,7 @@ education:
   courses:
   - course: M.S. in Computer Science
     institution: Georgia Institute of Technology
-    year: 2019-present
+    year: 2019-2021
   - course: B.Tech. in Mathematics & Computing
     institution: Delhi Technological University
     year: 2013-2017
@@ -56,7 +56,7 @@ social:
 # To enable, copy your resume/CV to `static/files/cv.pdf` and uncomment the lines below.  
 - icon: cv
   icon_pack: ai
-  link: files/resume.pdf
+  link: /resume
 
 # Enter email to display Gravatar (if Gravatar enabled in Config)
 email: ""
@@ -74,4 +74,4 @@ In Summer 2020, I interned at [Nvidia with the TensorRT team](https://developer.
 
 Prior to starting at Georgia Tech, I was an ML Software Engineer at Samsung R&D, India helping enable flagship vision applications through the [Samsung Neural SDK](https://developer.samsung.com/neural/overview.html) and completed my Bachelor's degree in Mathematics & Computing at Delhi Technological University.
 
-I like to learn new things & explain them, and talk people’s ears off about work I find interesting.
+<span style="color:#c22706">I'm currently looking for full-time roles starting June 2021. Please email me if interested!</span>

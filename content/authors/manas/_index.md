@@ -72,6 +72,7 @@ I'm a 2nd year MS CS student at Georgia Tech. I'm advised by [Prof. Alexey Tuman
 
 In Summer 2020, I interned at [Nvidia with the TensorRT team](https://developer.nvidia.com/tensorrt), optimizing systems for deep-learning inference on GPUs.
 
-Prior to starting at Georgia Tech, I was an ML Software Engineer at Samsung R&D, India helping enable flagship vision applications through the [Samsung Neural SDK](https://developer.samsung.com/neural/overview.html) and completed my Bachelor's degree in Mathematics & Computing at Delhi Technological University.
+Prior to starting at Georgia Tech, I was an ML Software Engineer at Samsung India R&D, where I helped bring flagship vision applications to low-power devices through the [Samsung Neural SDK](https://developer.samsung.com/neural/overview.html). \
+I completed my Bachelor's degree in Math & Computing at Delhi Technological University.
 
 <span style="color:#c22706">I'm currently looking for full-time roles starting June 2021. Please email me if interested!</span>
